@@ -1,0 +1,34 @@
+---
+pe_build:
+  version: "2015.3.1"
+  download_root: "http://s3.amazonaws.com/pe-builds/released/:version"
+
+# Example of using pe_build to deploy a published PE release
+#     ---
+#     pe_build:
+#       version: "3.8.1"
+#       download_root: "http://s3.amazonaws.com/pe-builds/released/:version"
+#
+# Examples of using pe_build to test unreleased builds
+#     ---
+#     pe_build:
+#       version: "3.8.2-rc0-9-gf2b5ff5"
+#       download_root: "http://enterprise.delivery.puppetlabs.net/3.8/ci-ready"
+#     ---
+#     pe_build:
+#       version: "2015.2.0-rc0-48-g74ade36"
+#       download_root: "http://enterprise.delivery.puppetlabs.net/2015.2/ci-ready"
+#     pe_build:
+#       version_file:  "http://getpe.delivery.puppetlabs.net/latest/2015.3"
+#       download_root: "http://enterprise.delivery.puppetlabs.net/2015.3/ci-ready/"
+#       filename: "puppet-enterprise-:version-el-7-x86_64.tar"
+#
+# For gold build use this syntax with filename, because Oscar expects things that
+# "look like" released builds will be .tar.gz files instead of .tar files. Our 
+# gold builds look like released builds to Oscar, but have a .tar extension, so
+# we need to name the filename explicitly.
+#    ---
+#    pe_build:
+#      version: "2015.2.0"
+#      filename: "puppet-enterprise-2015.2.0-el-6-x86_64.tar"
+#      download_root: "http://enterprise.delivery.puppetlabs.net/2015.2/ci-ready"

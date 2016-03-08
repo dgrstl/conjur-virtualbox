@@ -2,3 +2,7 @@ Puppetfile.lock
 *.tgz
 *.crt
 *.key
+.pe_build
+.rnd
+.vagrant
+conjur-appliance-4.6.1.tgz

@@ -1,0 +1,37 @@
+---
+ # Hashicorp boxes are used by default as per vms.yaml, but there are options
+ # for other boxes in the boxes.yaml file.
+vms:
+  #======================================#
+  # Puppet Master machine                #
+  #======================================#
+  - name: "master.inf.puppetlabs.demo"
+    box: "puppetlabs/centos-7.0-64-nocm"
+    roles: [ "master" ]
+
+  #======================================#
+  # General-purpose machines, Portland   #
+  #======================================#
+  #- name: "centos6a.pdx.puppetlabs.demo"
+  #  box: "puppetlabs/centos-6.6-64-nocm"
+  #  roles: [ "posix_agent" ]
+
+  #- name: "centos7a.pdx.puppetlabs.demo"
+  #  box: "puppetlabs/centos-7.0-64-nocm"
+  #  roles: [ "posix_agent" ]
+
+  #- name: "ubuntu1404a.pdx.puppetlabs.demo"
+  #  box: "puppetlabs/ubuntu-14.04-64-nocm"
+  #  roles: [ "posix_agent" ]
+
+  #- name: "server2008r2a.pdx.puppetlabs.demo"
+  #  box: "windows-server-2008-r2-x64-v2"
+  #  roles: [ "windows_agent" ]
+
+  #- name: "server2012r2a.pdx.puppetlabs.demo"
+  #  box: "windows-server-2012r2-v3"
+  #  roles: [ "windows_agent" ]
+
+  - name: "conjur.puppetlabs.demo"
+    box: "puppetlabs/ubuntu-14.04-64-nocm"
+    roles: [ "posix_agent" ]
