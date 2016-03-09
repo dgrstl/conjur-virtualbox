@@ -1,40 +1,36 @@
 ---
 roles:
   master:
-    private_networks:
-      - ip: '0.0.0.0'
-        auto_network: true
     providers:
       - type: virtualbox
         customize:
           - [modifyvm, !ruby/sym id, '--memory', 4096]
           - [modifyvm, !ruby/sym id, '--ioapic', 'on']
           - [modifyvm, !ruby/sym id, '--cpus', '4']
-#    synced_folders:
-#      - host_path:  '.files'
-#        guest_path: '/opt/tse-files'
     provisioners:
-      - type: shell
-        inline: "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"
-      - type: hosts
       - type: pe_bootstrap
-        role: !ruby/sym master
-        autosign:
-          - '*.vm'
-          - '*.demo'
+        role: :master
+      #  autosign:
+      #    - '*.vm'
+      #    - '*.demo'
         answer_extras:
           - 'q_pe_database=y'
           - 'q_puppet_cloud_install=y'
           - 'q_puppetmaster_enterpriseconsole_port=443'
           - 'q_skip_backup=y'
           - 'q_use_application_services=y'
-          - 'q_puppetmaster_r10k_remote=git@github.com:dgrstl/conjur-control-repo.git'
+          - 'q_puppetmaster_r10k_remote=https://github.com/dgrstl/conjur-control-repo.git'
           - 'q_puppetmaster_r10k_private_key=/etc/puppetlabs/puppetserver/ssh/id-control_repo.rsa'
           - 'q_puppetmaster_code_manager_auto_configure=y'
-      - type: shell
-        path: "scripts/bootstrap.sh"
+      #- type: shell
+      #  path: "scripts/bootstrap.sh"
       - type: shell
         path: "scripts/deploy_repo.sh"
+
+  pe_agent:
+    provisioners:
+      - type: pe_agent
+        master_vm: master.inf.puppetlabs.demo
 
 
   windows_agent:
@@ -63,23 +59,44 @@ roles:
       - host_path:  '.files'
         guest_path: 'c:/seteam-files'
 
-  posix_agent:
-    private_networks:
-      - {ip: '0.0.0.0', auto_network: true}
+  trusted_fact_pe_aio_2015_3:
     provisioners:
-      - {type: shell, inline: "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"}
-      - {type: hosts}
       - type: shell
-        inline: |-
-          curl -sk https://master.inf.puppetlabs.demo:8140/packages/current/install.bash | /bin/bash
+        inline: 'mkdir -p /etc/puppetlabs/puppet; cp /vagrant/trusted_facts/pe_aio_2015_3_csr_attributes.yaml /etc/puppetlabs/puppet/csr_attributes.yaml'
 
-  darwin_agent:
-    private_networks:
-      - {ip: '0.0.0.0', auto_network: true}
+  trusted_fact_conjur_master:
+    provisioners:
+      - type: shell
+        inline: 'mkdir -p /etc/puppetlabs/puppet; cp /vagrant/trusted_facts/conjur_master_csr_attributes.yaml /etc/puppetlabs/puppet/csr_attributes.yaml'
 
-  posix_noagent:
+  trusted_fact_conjur_pe_node:
+    provisioners:
+      - type: shell
+        inline: 'mkdir -p /etc/puppetlabs/puppet; cp /vagrant/trusted_facts/conjur_pe_node_csr_attributes.yaml /etc/puppetlabs/puppet/csr_attributes.yaml'
+
+  el_stop_firewall:
+    provisioners:
+      - type: shell
+        inline: |
+          RH_VERS=$(rpm -q --qf "%{VERSION}" $(rpm -q --whatprovides redhat-release))
+          if [ "$RH_VERS" -gt "6" ]; then
+            systemctl stop firewalld.service
+            systemctl disable firewalld.service
+          else
+            service iptables stop
+            chkconfig iptables off
+          fi
+
+  el_base:
     private_networks:
       - {ip: '0.0.0.0', auto_network: true}
     provisioners:
-      - {type: shell, inline: "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"}
       - {type: hosts}
+      - {type: shell, inline: "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"}
+    #provisioners:
+    #  - type: shell
+    #    inline: '/usr/bin/yum install telnet -y'
+    #  - type: shell
+    #    inline: '/usr/bin/yum install vim -y'
+    #  - type: shell
+    #    inline: '/usr/bin/yum install tree -y'
