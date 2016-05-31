@@ -13,9 +13,28 @@ vms:
       - el_stop_firewall
       - trusted_fact_pe_aio_2015_3
 
+  #======================================#
+  # Conjur Secrets Server machine        #
+  #======================================#
   - name: conjur.puppetlabs.demo
     box: puppetlabs/ubuntu-14.04-64-nocm
     roles:
       - pe_agent
       - el_base
       - trusted_fact_conjur_master
+
+  #======================================#
+  # Gitlab machine                       #
+  #======================================#
+  - name: "gitlab.inf.puppet.vm"
+    box: "puppetlabs/centos-7.2-64-nocm"
+    roles: [ "posix_agent" ]
+    roles:
+      - pe_agent
+      - el_base
+      - el_stop_firewall
+      - el_trusted_fact_gitlab
+    providers:
+      - type: virtualbox
+        customize:
+          - [modifyvm, !ruby/sym id, '--memory', 1024]

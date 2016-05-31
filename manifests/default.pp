@@ -1,20 +1,20 @@
 include 'docker'
 
 package { 'fail2ban':
-	ensure => installed,
+  ensure => installed,
 }
 
 docker::image { 'conjur-ui':
    image => 'conjurinc/conjur-ui',
 }
 
-docker::image { 'conjurinc/conjur-appliance':
+docker::image { 'conjurinc/conjur-appliance'
    docker_tar  => '/vagrant/conjur-appliance-4.6.1.tgz',
 }
 
 docker::run { 'conjur-solo':
-   image => 'registry.tld/conjur-appliance',
-   ports => ['443:443','636:636','5432:5432'],
+   image   => 'registry.tld/conjur-appliance',
+   ports   => ['443:443','636:636','5432:5432'],
    restart => 'always',
 }
 
@@ -41,4 +41,3 @@ docker::run { 'conjur-ui':
    links => ['conjur-solo:conjur.local'],
    require => Docker::Exec['configure-master'],
 }
-
