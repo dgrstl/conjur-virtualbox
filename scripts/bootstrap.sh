@@ -48,7 +48,7 @@ install_with_environment()
 		:sources:
 		  puppet:
 		    basedir: $g_puppet_environmentpath
-		    remote: /opt/puppetlabs/repos/puppet-control.git
+		    remote: /opt/puppetlabs/repos/control-repo.git
 	EOF
 	r10k deploy environment -p -v
 

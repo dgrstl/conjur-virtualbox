@@ -5,18 +5,18 @@ vms:
   #======================================#
   # Puppet Master machine                #
   #======================================#
-  - name: master.inf.puppetlabs.demo
+  - name: master.inf.puppet.vm
     box: puppetlabs/centos-7.0-64-nocm
     roles:
       - master
       - el_base
       - el_stop_firewall
-      - trusted_fact_pe_aio_2015_3
+      - trusted_fact_puppet_master
 
   #======================================#
   # Conjur Secrets Server machine        #
   #======================================#
-  - name: conjur.puppetlabs.demo
+  - name: conjur-master.puppet.vm
     box: puppetlabs/ubuntu-14.04-64-nocm
     roles:
       - pe_agent
@@ -24,16 +24,24 @@ vms:
       - trusted_fact_conjur_master
 
   #======================================#
-  # Gitlab machine                       #
+  # managed node machine                 #
   #======================================#
-  - name: "gitlab.inf.puppet.vm"
-    box: "puppetlabs/centos-7.2-64-nocm"
-    roles: [ "posix_agent" ]
+  - name: conjur-pe-node.puppet.vm
+    box: puppetlabs/centos-7.0-64-nocm
     roles:
       - pe_agent
       - el_base
-      - el_stop_firewall
-      - el_trusted_fact_gitlab
+      - trusted_fact_conjur_pe_node
+
+  #======================================#
+  # Gitlab machine                       #
+  #======================================#
+  - name: gitlab.inf.puppet.vm
+    box: puppetlabs/centos-7.2-64-nocm
+    roles:
+      - pe_agent
+      - el_base
+      - trusted_fact_gitlab
     providers:
       - type: virtualbox
         customize:

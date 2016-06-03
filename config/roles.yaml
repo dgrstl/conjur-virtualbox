@@ -10,27 +10,26 @@ roles:
     provisioners:
       - type: pe_bootstrap
         role: :master
-      #  autosign:
-      #    - '*.vm'
-      #    - '*.demo'
+        autosign:
+          - '*.vm'
         answer_extras:
           - 'q_pe_database=y'
           - 'q_puppet_cloud_install=y'
           - 'q_puppetmaster_enterpriseconsole_port=443'
           - 'q_skip_backup=y'
           - 'q_use_application_services=y'
-          - 'q_puppetmaster_r10k_remote=https://github.com/dgrstl/conjur-control-repo.git'
-          - 'q_puppetmaster_r10k_private_key=/etc/puppetlabs/puppetserver/ssh/id-control_repo.rsa'
+          - 'q_puppetmaster_r10k_remote=/opt/puppetlabs/repos/control-repo.git'
+          - 'q_puppetmaster_r10k_private_key=/dev/null'
           - 'q_puppetmaster_code_manager_auto_configure=y'
-      #- type: shell
-      #  path: "scripts/bootstrap.sh"
       - type: shell
-        path: "scripts/deploy_repo.sh"
+        path: "scripts/bootstrap.sh"
+#      - type: shell
+#        path: "scripts/deploy_repo.sh"
 
   pe_agent:
     provisioners:
       - type: pe_agent
-        master_vm: master.inf.puppetlabs.demo
+        master_vm: master.inf.puppet.vm
 
 
   windows_agent:
@@ -59,10 +58,10 @@ roles:
       - host_path:  '.files'
         guest_path: 'c:/seteam-files'
 
-  trusted_fact_pe_aio_2015_3:
+  trusted_fact_puppet_master:
     provisioners:
       - type: shell
-        inline: 'mkdir -p /etc/puppetlabs/puppet; cp /vagrant/trusted_facts/pe_aio_2015_3_csr_attributes.yaml /etc/puppetlabs/puppet/csr_attributes.yaml'
+        inline: 'mkdir -p /etc/puppetlabs/puppet; cp /vagrant/trusted_facts/puppet_master_csr_attributes.yaml /etc/puppetlabs/puppet/csr_attributes.yaml'
 
   trusted_fact_conjur_master:
     provisioners:
@@ -73,6 +72,11 @@ roles:
     provisioners:
       - type: shell
         inline: 'mkdir -p /etc/puppetlabs/puppet; cp /vagrant/trusted_facts/conjur_pe_node_csr_attributes.yaml /etc/puppetlabs/puppet/csr_attributes.yaml'
+
+  trusted_fact_gitlab:
+    provisioners:
+      - type: shell
+        inline: 'mkdir -p /etc/puppetlabs/puppet; cp /vagrant/trusted_facts/gitlab_csr_attributes.yaml /etc/puppetlabs/puppet/csr_attributes.yaml'
 
   el_stop_firewall:
     provisioners:
